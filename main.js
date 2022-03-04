@@ -53,13 +53,15 @@ var answer_holder = "";
 var score = 0;
 
 function preload() {
-
+    classifier = ml5.imageClassifier("DoodleNet");
 }
 
 function setup() {
     canvas = createCanvas(400, 400);
     canvas.center();
     background("white");
+    canvas.mouseReleased(classifyCanvas);
+    synth = window.speechSynthesis;
 }
 
 function draw() {
@@ -68,6 +70,13 @@ function draw() {
         answer_holder = "set";
         score = score + 1;
         document.getElementById("score").innerHTML = "Score: " + score;
+    }
+
+    strokeWeight(13);
+    stroke(0);
+
+    if (mouseIsPressed) {
+        line(pmouseX, pmouseY, mouseX, mouseY);
     }
 }
 
@@ -89,4 +98,24 @@ function updateCanvas() {
     background("white");
     sketch = Element_of_Array;
     document.getElementById("sketch_draw").innerHTML = "Sketch to be drawn: " + sketch;
+}
+
+function classifyCanvas() {
+    classifier.classify(canvas, gotResults);
+}
+
+function gotResults(error, results) {
+    if (error) {
+        console.error(error);
+    }
+    else {
+        console.log(results);
+        document.getElementById("sketch").innerHTML = "Your Sketch: " +
+            results[0].label;
+        document.getElementById("confidence").innerHTML = "Confidence: " +
+            Math.round(results[0].confidence * 100) + "%";
+
+        utterThis = new SpeechSynthesisUtterance(results[0].label);
+        synth.speak(utterThis);
+    }
 }
