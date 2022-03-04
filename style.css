@@ -1,4 +1,4 @@
-﻿body {
+body {
     background-color:palevioletred;
 }
 
@@ -15,4 +15,8 @@
 #time {
     float: right;
     margin-right: 100px;
+}
+
+canvas {
+    margin-top:200px;
 }
